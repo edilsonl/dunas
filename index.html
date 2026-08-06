@@ -1,14 +1,119 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec">
-  <script>
-    window.location.replace("https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec");
-  </script>
-  <title>Redirecionando...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <title>Meu Aplicativo</title>
+    
+    <!-- Link para o arquivo de manifesto (obrigatório) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f8fafc;
+        }
+
+        body {
+            position: fixed;
+            inset: 0;
+        }
+
+        iframe {
+            display: block;
+            width: 100vw;
+            height: 100dvh;
+            border: 0;
+        }
+
+        /* Botão Flutuante de Instalação Moderno */
+        #btn-instalar-app {
+            display: none; /* Só aparece se o celular for compatível */
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 9999;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            align-items: center;
+            gap: 8px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    </style>
 </head>
+
 <body>
-  <p>Redirecionando...</p>
+
+<!-- Botão que convida o usuário a instalar -->
+<button id="btn-instalar-app">
+    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://w3.org"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+    Instalar Aplicativo
+</button>
+
+<!-- Seu site da Vercel rodando em tela cheia -->
+<iframe
+    id="appFrame"
+    src="https://dunas-three.vercel.app/"
+    loading="eager">
+</iframe>
+
+<script>
+    const btnInstalar = document.getElementById("btn-instalar-app");
+    let disparadorInstalacao;
+
+    // 1. Ativa o Service Worker básico para permitir a instalação
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("Instalador configurado."))
+            .catch(err => console.log("Erro no instalador:", err));
+    }
+
+    // 2. Captura o evento quando o celular avisa que o site pode virar App
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); 
+        disparadorInstalacao = e; 
+        btnInstalar.style.display = 'flex'; // Exibe o botão flutuante
+    });
+
+    // 3. Executa a instalação ao clicar no botão
+    btnInstalar.addEventListener('click', async () => {
+        if (disparadorInstalacao) {
+            disparadorInstalacao.prompt(); 
+            const { outcome } = await disparadorInstalacao.userChoice;
+            if (outcome === 'accepted') {
+                console.log('App instalado com sucesso!');
+            }
+            btnInstalar.style.display = 'none'; 
+            disparadorInstalacao = null;
+        }
+    });
+
+    // Esconde o botão se o app já estiver instalado
+    window.addEventListener('appinstalled', () => {
+        btnInstalar.style.display = 'none';
+        disparadorInstalacao = null;
+    });
+</script>
+
 </body>
 </html>
