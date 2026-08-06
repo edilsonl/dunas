@@ -1,8 +1,7 @@
 self.addEventListener('install', (e) => {
-    self.skipWaiting();
+  console.log('[Service Worker] Instalado');
 });
 
 self.addEventListener('fetch', (e) => {
-    // Garante o carregamento online dos dados do iframe
-    e.respondWith(fetch(e.request));
+  // Necessário apenas para o navegador reconhecer o site como instalável
 });
