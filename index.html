@@ -2,151 +2,112 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Sistema Dunas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carregando Sistema...</title>
     
-    <!-- Configurações PWA -->
+    <!-- Arquivos obrigatórios para habilitar a instalação -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
-    
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
+            text-align: center;
             padding: 20px;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-        .logo-container {
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
-        .logo-container img {
-            width: 70px;
-            height: 70px;
-            object-fit: contain;
-        }
-        h1 {
-            font-size: 1.35rem;
-            color: #1e293b;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        p {
-            font-size: 0.9rem;
-            color: #64748b;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
-        }
-        .btn:active {
-            transform: scale(0.98);
-        }
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-            margin-bottom: 12px;
-        }
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-        .btn-secondary {
-            display: none; /* Só aparece se o celular puder instalar */
+        p { font-size: 1rem; color: #64748b; margin-bottom: 20px; }
+        
+        /* Botão de instalação moderno que só aparece se o celular for compatível */
+        #btn-instalar {
+            display: none;
             background: #10b981;
             color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 10px 15px rgba(16, 185, 129, 0.3);
+            animation: bounce 2s infinite;
         }
-        .btn-secondary:hover {
-            background: #059669;
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body>
 
-<div class="card">
-
+    <div class="loader"></div>
+    <p id="status-text">Redirecionando para o sistema institucional...</p>
     
-    <h1>Gerenciamento Dunas</h1>
-    
-    
-    <!-- Botão de Login Direto (Abre de forma limpa sem erro 401) -->
-    <a href="https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec" target="_blank" class="btn btn-primary">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://w3.org"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
-        Entrar com Conta gmail
-    </a>
-    
-    <!-- Botão de Instalar PWA (Dispara o atalho nativo do celular) -->
-    <button id="btn-instalar" class="btn btn-secondary">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://w3.org"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-        Instalar no Celular
-    </button>
-</div>
+    <!-- Botão de instalação que interrompe o redirecionamento se clicado -->
+    <button id="btn-instalar">Instalar Aplicativo no Celular</button>
 
 <script>
+    const urlDestino = "https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec";
     const btnInstalar = document.getElementById("btn-instalar");
+    const statusText = document.getElementById("status-text");
     let disparadorInstalacao;
+    let tempoRedirecionamento;
 
-    // Ativa o service worker local
+    // 1. Ativa o Service Worker obrigatório
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-            .then(() => console.log("PWA Pronto."))
-            .catch(err => console.log("Erro PWA:", err));
+        navigator.serviceWorker.register('sw.js');
     }
 
-    // Captura a elegibilidade de instalação do celular
+    // 2. Se o celular for compatível com a instalação, o botão aparece
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         disparadorInstalacao = e;
-        btnInstalar.style.display = 'flex'; // Exibe o botão de instalação se o celular aceitar
+        
+        // Cancela o redirecionamento automático para dar chance ao usuário de instalar
+        clearTimeout(tempoRedirecionamento); 
+        
+        statusText.innerText = "Deseja criar um atalho na sua tela inicial antes de entrar?";
+        btnInstalar.style.display = 'block';
     });
 
-    // Evento de clique para instalar
+    // 3. Ação de instalar
     btnInstalar.addEventListener('click', async () => {
         if (disparadorInstalacao) {
             disparadorInstalacao.prompt();
             const { outcome } = await disparadorInstalacao.userChoice;
-            if (outcome === 'accepted') {
-                btnInstalar.style.display = 'none';
-            }
             disparadorInstalacao = null;
+            btnInstalar.style.display = 'none';
+            
+            // Após instalar ou recusar, envia o usuário para o Google
+            statusText.innerText = "Instalação concluída. Redirecionando...";
+            setTimeout(() => { window.location.replace(urlDestino); }, 1500);
         }
     });
 
-    // Remove o botão se já instalado
+    // Se o app já estiver instalado, some com o botão
     window.addEventListener('appinstalled', () => {
         btnInstalar.style.display = 'none';
-        disparadorInstalacao = null;
+        window.location.replace(urlDestino);
     });
+
+    // 4. Redirecionamento Padrão: Se o aparelho NÃO for compatível com PWA (como computadores),
+    // ele aguarda apenas 2.5 segundos (tempo para tentar ler o PWA) e redireciona sozinho.
+    tempoRedirecionamento = setTimeout(() => {
+        window.location.replace(urlDestino);
+    }, 2500);
 </script>
 
 </body>
