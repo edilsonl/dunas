@@ -2,13 +2,100 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec">
-  <script>
-    window.location.replace("https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec");
-  </script>
-  <title>Redirecionando...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dunas App</title>
+  
+  <!-- Configurações para o PWA (Atalho) -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0056b3">
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100vh; margin: 0; background-color: #f4f6f8; text-align: center;
+    }
+    h1 { color: #333; }
+    .btn {
+      padding: 15px 30px; margin: 10px; font-size: 16px; cursor: pointer;
+      border: none; border-radius: 8px; font-weight: bold; width: 250px;
+    }
+    .btn-install { background-color: #0056b3; color: white; display: none; }
+    .btn-access { background-color: #28a745; color: white; }
+    #ios-instruction {
+      display: none; margin-top: 20px; font-size: 14px; color: #666; max-width: 300px;
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecionando...</p>
+
+  <!-- Esta tela só aparece se o app NÃO estiver instalado -->
+  <div id="content" style="display: none;">
+    <h1>Dunas App</h1>
+    <p>Instale o aplicativo para acesso rápido ou acesse pelo navegador.</p>
+
+    <button id="installBtn" class="btn btn-install">Instalar Aplicativo</button>
+    <button class="btn btn-access" onclick="redirect()">Acessar o Sistema</button>
+
+    <p id="ios-instruction">
+      <strong>No iPhone:</strong> Toque no ícone de Compartilhar <br> e escolha "Adicionar à Tela de Início".
+    </p>
+  </div>
+
+  <script>
+    const targetUrl = "https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec";
+
+    function redirect() {
+      window.location.replace(targetUrl);
+    }
+
+    // 1. Verifica se já está rodando como App instalado (Standalone)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    if (isStandalone) {
+      // Se já estiver instalado, redireciona imediatamente sem mostrar nada
+      redirect();
+    } else {
+      // Se estiver no navegador normal, mostra a tela
+      document.getElementById('content').style.display = 'block';
+    }
+
+    // 2. Registrar o Service Worker (Obrigatório para instalar atalho)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+
+    // 3. Lógica do botão de instalação (Android / Chrome)
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    const iosInstruction = document.getElementById('ios-instruction');
+
+    // Detectar se é iOS (iPhone/iPad)
+    const isIos = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod/.test(userAgent);
+    };
+
+    if (isIos()) {
+      // O iOS não aceita botão de instalar, o usuário precisa fazer manualmente
+      iosInstruction.style.display = 'block';
+    }
+
+    // Capturar o evento de instalação no Android
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block'; // Mostra o botão
+
+      installBtn.addEventListener('click', () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          deferredPrompt = null;
+        });
+      });
+    });
+  </script>
 </body>
 </html>
