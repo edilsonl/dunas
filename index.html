@@ -5,33 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestor Dunas App</title>
   
-  <!-- Configurações para o PWA (Atalho) -->
+  
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0056b3">
   
   <style>
+    
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      height: 100vh; margin: 0; background-color: #f4f6f8; text-align: center;
+      display: flex; 
+      flex-direction: column;
+      align-items: center; 
+      justify-content: center;
+      min-height: 100vh; 
+      margin: 0; 
+      background-color: #f4f6f8; 
+      text-align: center;
+      padding: 20px;
     }
-    h1 { color: #333; }
+
+    
+    #content {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 350px;
+    }
+
+    h1 { 
+      color: #333; 
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+
     .btn {
-      padding: 15px 30px; margin: 10px; font-size: 16px; cursor: pointer;
-      border: none; border-radius: 8px; font-weight: bold; width: 250px;
+      padding: 15px 20px; 
+      margin: 8px 0; 
+      font-size: 16px; 
+      cursor: pointer;
+      border: none; 
+      border-radius: 8px; 
+      font-weight: bold; 
+      width: 100%;
+      max-width: 280px;
+      transition: background-color 0.2s;
     }
-    .btn-install { background-color: #0056b3; color: white; display: none; }
-    .btn-access { background-color: #28a745; color: white; }
+
+    .btn-install { 
+      background-color: #0056b3; 
+      color: white; 
+      display: none; 
+    }
+
+    .btn-access { 
+      background-color: #28a745; 
+      color: white; 
+    }
+
     #ios-instruction {
-      display: none; margin-top: 20px; font-size: 14px; color: #666; max-width: 300px;
+      display: none; 
+      margin-top: 20px; 
+      font-size: 14px; 
+      color: #666; 
+      line-height: 1.4;
     }
   </style>
 </head>
 <body>
 
-  <!-- Esta tela só aparece se o app NÃO estiver instalado -->
-  <div id="content" style="display: none;">
+  
+  <div id="content">
     <h1>Gestor Dunas App</h1>
     <p>Instale o aplicativo para acesso rápido ou acesse pelo navegador.</p>
 
@@ -50,48 +104,47 @@
       window.location.replace(targetUrl);
     }
 
-    // 1. Verifica se já está rodando como App instalado (Standalone)
+    
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
     if (isStandalone) {
-      // Se já estiver instalado, redireciona imediatamente sem mostrar nada
+      
       redirect();
     } else {
-      // Se estiver no navegador normal, mostra a tela
-      document.getElementById('content').style.display = 'block';
+      
+      document.getElementById('content').style.display = 'flex';
     }
 
-    // 2. Registrar o Service Worker (Obrigatório para instalar atalho)
+    
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
     }
 
-    // 3. Lógica do botão de instalação (Android / Chrome)
+    
     let deferredPrompt;
     const installBtn = document.getElementById('installBtn');
     const iosInstruction = document.getElementById('ios-instruction');
 
-    // Detectar se é iOS (iPhone/iPad)
+    
     const isIos = () => {
       const userAgent = window.navigator.userAgent.toLowerCase();
       return /iphone|ipad|ipod/.test(userAgent);
     };
 
     if (isIos()) {
-      // O iOS não aceita botão de instalar, o usuário precisa fazer manualmente
       iosInstruction.style.display = 'block';
     }
 
-    // Capturar o evento de instalação no Android
+    
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      installBtn.style.display = 'block'; // Mostra o botão
+      installBtn.style.display = 'block'; 
 
       installBtn.addEventListener('click', () => {
         installBtn.style.display = 'none';
         deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
+        deferredPrompt.userChoice.then(() => {
           deferredPrompt = null;
         });
       });
