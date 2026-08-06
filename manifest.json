@@ -1,10 +1,10 @@
 {
   "name": "Gestor Dunas App",
-  "short_name": "Dunas",
+  "short_name": "Gestor Dunas",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f4f6f8",
-  "theme_color": "#0056b3",
+  "theme_color": "#CBBD93",
   "icons": [
     {
       "src": "/icon-192.png",
