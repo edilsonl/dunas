@@ -1,114 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carregando Sistema...</title>
-    
-    <!-- Arquivos obrigatórios para habilitar a instalação -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
-
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-            padding: 20px;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #2563eb;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        p { font-size: 1rem; color: #64748b; margin-bottom: 20px; }
-        
-        /* Botão de instalação moderno que só aparece se o celular for compatível */
-        #btn-instalar {
-            display: none;
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            box-shadow: 0 10px 15px rgba(16, 185, 129, 0.3);
-            animation: bounce 2s infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-    </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec">
+  <script>
+    window.location.replace("https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec");
+  </script>
+  <title>Redirecionando...</title>
 </head>
 <body>
-
-    <div class="loader"></div>
-    <p id="status-text">Redirecionando para o sistema...</p>
-    
-    <!-- Botão de instalação que interrompe o redirecionamento se clicado -->
-    <button id="btn-instalar">Instalar Aplicativo no Celular</button>
-
-<script>
-    const urlDestino = "https://script.google.com/macros/s/AKfycbxqn57P4lIxoi1s31m4-adrY5KVSO2hadAaFByAK3LOcsBy831vlf7SRu-9lFfamPJe/exec";
-    const btnInstalar = document.getElementById("btn-instalar");
-    const statusText = document.getElementById("status-text");
-    let disparadorInstalacao;
-    let tempoRedirecionamento;
-
-    // 1. Ativa o Service Worker obrigatório
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
-
-    // 2. Se o celular for compatível com a instalação, o botão aparece
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        disparadorInstalacao = e;
-        
-        // Cancela o redirecionamento automático para dar chance ao usuário de instalar
-        clearTimeout(tempoRedirecionamento); 
-        
-        statusText.innerText = "Deseja criar um atalho na sua tela inicial antes de entrar?";
-        btnInstalar.style.display = 'block';
-    });
-
-    // 3. Ação de instalar
-    btnInstalar.addEventListener('click', async () => {
-        if (disparadorInstalacao) {
-            disparadorInstalacao.prompt();
-            const { outcome } = await disparadorInstalacao.userChoice;
-            disparadorInstalacao = null;
-            btnInstalar.style.display = 'none';
-            
-            // Após instalar ou recusar, envia o usuário para o Google
-            statusText.innerText = "Instalação concluída. Redirecionando...";
-            setTimeout(() => { window.location.replace(urlDestino); }, 1500);
-        }
-    });
-
-    // Se o app já estiver instalado, some com o botão
-    window.addEventListener('appinstalled', () => {
-        btnInstalar.style.display = 'none';
-        window.location.replace(urlDestino);
-    });
-
-    // 4. Redirecionamento Padrão: Se o aparelho NÃO for compatível com PWA (como computadores),
-    // ele aguarda apenas 2.5 segundos (tempo para tentar ler o PWA) e redireciona sozinho.
-    tempoRedirecionamento = setTimeout(() => {
-        window.location.replace(urlDestino);
-    }, 2500);
-</script>
-
+  <p>Redirecionando...</p>
 </body>
 </html>
